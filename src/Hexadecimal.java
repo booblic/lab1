@@ -175,6 +175,11 @@ class Hexadecimal extends Calculator {
 
                 calculateString.delete(startPosition, finishPosition);
 
+                if (b == 0) {
+                    System.out.println("Деление на нуль!");
+                    return;
+                }
+
                 c = a / b;
 
                 System.out.println("Результат: " + c);

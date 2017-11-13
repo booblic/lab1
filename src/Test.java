@@ -11,45 +11,53 @@ public class Test {
     }
 
     public static void main(String[] args) {
+
         Menu menu = new Menu();
+
         menu.addEntry(new MenuEntry("Ввод выражения с клавиатуры.") {
             @Override
             public void run() {
-                String substr = null;
+
                 String line = null;
-                int i = 0;
+                String numberSystems = null;
+
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
                 try {
+                    System.out.print("Введите систему счисления (2, 8, 10 или 16): ");
+                    numberSystems = reader.readLine();
+                    System.out.println("Введеная системв счисления: " + numberSystems);
+                    System.out.print("Введите выражение: ");
                     line = reader.readLine();
                     System.out.println("Введеная строка: " + line);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                Scanner scanner = new Scanner(line);
+                int openBracketNumber = 0, closeBracketNumber = 0;
 
-                if (scanner.hasNext()) {
-                    i = scanner.nextInt();
-                    System.out.println(i);
-                    substr = scanner.nextLine().trim();
-                    System.out.println(substr);
-
-                } else {
-                    System.out.println("String is empty!");
+                for (int j = 0; j < line.length(); j++) {
+                    if (line.charAt(j) == '(') { openBracketNumber++; }
+                    if (line.charAt(j) == ')') { closeBracketNumber++; }
                 }
 
-                switch (i) {
-                    case 2:
-                        action(new Binary(substr));
+                if(openBracketNumber != closeBracketNumber) {
+                    System.out.println("Не хватает скобки!");
+                    return;
+                }
+
+                switch (numberSystems) {
+                    case "2":
+                        action(new Binary(line));
                         break;
-                    case 8:
-                        action(new Octal(substr));
+                    case "8":
+                        action(new Octal(line));
                         break;
-                    case 10:
-                        action(new Decimal(substr));
+                    case "10":
+                        action(new Decimal(line));
                         break;
-                    case 16:
-                        action(new Hexadecimal(substr));
+                    case "16":
+                        action(new Hexadecimal(line));
                         break;
                 }
 
@@ -78,6 +86,18 @@ public class Test {
 
                 } else {
                     System.out.println("String is empty!");
+                }
+
+                int openBracketNumber = 0, closeBracketNumber = 0;
+
+                for (int j = 0; j < substr.length(); j++) {
+                    if (substr.charAt(j) == '(') { openBracketNumber++; }
+                    if (substr.charAt(j) == ')') { closeBracketNumber++; }
+                }
+
+                if(openBracketNumber != closeBracketNumber) {
+                    System.out.println("Не хватает скобки!");
+                    return;
                 }
 
                 switch (i) {

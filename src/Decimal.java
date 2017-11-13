@@ -29,7 +29,9 @@ class Decimal extends Calculator {
 
     // уберает лишние пробелы
     private String formater(String input) {
+
         if (input == null) return null;
+
         return input.replaceAll(" ", "");
     }
 
@@ -173,6 +175,11 @@ class Decimal extends Calculator {
                 b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
 
                 calculateString.delete(startPosition, finishPosition);
+
+                if (b == 0) {
+                    System.out.println("Деление на нуль!");
+                    return;
+                }
 
                 c = a / b;
 
