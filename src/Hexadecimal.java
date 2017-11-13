@@ -1,6 +1,6 @@
 class Hexadecimal extends Calculator {
     private String term;
-    private int result = 0;
+    private StringBuilder result;
 
     public Hexadecimal(String str) {
         term = str;
@@ -10,7 +10,7 @@ class Hexadecimal extends Calculator {
 
     }
 
-    public int parse(String str) {
+    public StringBuilder calculation(String str) {
         System.out.print("Result of" + term + "is: ");
         return result;
     }

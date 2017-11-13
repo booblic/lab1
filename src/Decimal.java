@@ -1,127 +1,685 @@
-import java.util.Scanner;
+import java.util.SplittableRandom;
+import java.util.regex.*;
 
 class Decimal extends Calculator {
-    private String term;
 
-    private StringBuilder termstr = new StringBuilder();
-    private int closeBracket, openBracket;
+    private String expression; // исходная строка
+    private StringBuilder result;
 
-    public Decimal(String str) {
-        term = str;
+    private StringBuilder calculateString = new StringBuilder(); // строка для вычисления выражения
+    private int closeBracket, openBracket; // переменные для хранения позиции скобок
+    private boolean sign = true; // переменная для хранения знака
+    private int finishPosition = 0, startPosition = 0; // переменные для хранения позиции начала и конца подвыражения
+
+    public Decimal(String input) {
+
+        expression = formater(input);
+
     }
 
     public void start() {
-        System.out.println("Result of term " + term + " is: " + parse(formater(term)));
+
+        result = calculation(expression);
+
+        if (sign == true) {
+            System.out.println("Result of term " + expression + " is: " + result);
+        } else {
+            result.insert(0, "-");
+            System.out.println("Result of term " + expression + " is: " + result);
+        }
     }
 
-    private String formater(String str) {
-        if (str == null) return null;
+    // уберает лишние пробелы
+    private String formater(String input) {
+        if (input == null) return null;
         //str = str.replaceAll(" ", "");
         //return String.join(" ", str.split("(?<=\\D)|(?=\\D)"));
-        return str.replaceAll(" ", "");
+        return input.replaceAll(" ", "");
     }
 
-    public int parse(String input) {
+    // вычисляет размер массива для хранения позиции знаков в выражении/подвыражении
+    private int arraySizeCalculation(String input) {
 
-        int a, b;
-        Integer c;
+        int slots = 0;
 
-        termstr.delete(0, termstr.length());
-        termstr.append(input);
-
-        for (int i = 0; i < termstr.length(); i++)
-        {
-            if(termstr.charAt(i)=='(') {
-                openBracket=i;
+        for (int i = 0; i < input.length(); i++) {
+            if ((input.charAt(i) == '+') || (input.charAt(i) == '-') ||
+                    (input.charAt(i) == '*') || (input.charAt(i) == '/') ||
+                    (input.charAt(i) == ')') || (input.charAt(i) == '(')) {
+                slots++;
             }
-            if(termstr.charAt(i)==')') {
-                closeBracket=i;
-                String newtermstr=new String();
-                newtermstr=termstr.substring(openBracket + 1, closeBracket);
-                System.out.println("Выражение в скобках: " + newtermstr);
-                termstr.delete(openBracket, closeBracket + 1);
-                System.out.println("После удаления выражения в скобках из основной строки: " + termstr);
-                StringBuilder mainString = new StringBuilder(termstr);
+        }
+        return slots;
+    }
+
+    private void brackets() {
+
+        for (int i = 0; i < calculateString.length(); i++) {
+
+            if (calculateString.charAt(i) == '(') {
+
+                openBracket = i;
+
+            }
+            if (calculateString.charAt(i) == ')') {
+
+                closeBracket = i;
+
+                String newСalculateString;
+                newСalculateString = calculateString.substring(openBracket + 1, closeBracket);
+                System.out.println("Выражение в скобках: " + newСalculateString);
+
+                calculateString.delete(openBracket, closeBracket + 1);
+                System.out.println("После удаления выражения в скобках из основной строки: " + calculateString);
+
+                StringBuilder mainString = new StringBuilder(calculateString);
                 System.out.println("Новая строка без выражения в скобках: " + mainString);
-                parse(newtermstr);
-                mainString.insert(openBracket, termstr.toString());
-                System.out.println("Новая строка со вставленной старой вместо скобок: " + mainString);
-                termstr.delete(0, termstr.length());
-                termstr.insert(0, mainString.toString());
-                System.out.println("После расчетов: " + termstr);
-                parse(termstr.toString());
+
+                calculation(newСalculateString);
+
+                mainString.insert(openBracket, calculateString.toString());
+                System.out.println("Новая строка с результатом выражения в скобоках: " + mainString);
+
+                calculateString.delete(0, calculateString.length());
+                calculateString.insert(0, mainString.toString());
+
+                System.out.println("Исходная строка с результатом выражения в скобоках: " + calculateString);
+
+                calculation(calculateString.toString());
             }
         }
+    }
 
-        for (int i = 0; i < termstr.length(); i++) {
-            if (termstr.charAt(i) == '*') {
-                a = Integer.parseInt(String.valueOf(termstr.charAt(i - 1)));
-                b = Integer.parseInt(String.valueOf(termstr.charAt(i + 1)));
-                System.out.println("Спарсенное выражение: " + a + termstr.charAt(i) + b);
-                System.out.println("До удаления: " + termstr);
-                termstr.delete(i - 1, i + 2);
-                System.out.println("После удаления: " + termstr);
+    private void minuser() {
+        if (calculateString.charAt(0) == '-') {
+            sign = false;
+            calculation(calculateString.delete(0, 1).toString());
+        }
+    }
+
+    private void multdiv() {
+
+        int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
+
+        double a, b; // переменные для операндов
+        Double c = null; // переменная для результата вычисления двух операндов
+
+        for (int i = 0; i < calculateString.length(); i++) {
+
+            if (calculateString.charAt(i) == '*') {
+
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
                 c = a * b;
-                System.out.println("Результат: " + c);
-                termstr.insert(i - 1, c.toString());
-                System.out.println("Итог: " + termstr);
+
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
                 break;
             }
-            if (termstr.charAt(i) == '/') {
-                a = Integer.parseInt(String.valueOf(termstr.charAt(i - 1)));
-                b = Integer.parseInt(String.valueOf(termstr.charAt(i + 1)));
-                System.out.println("Спарсенное выражение: " + a + termstr.charAt(i) + b);
-                System.out.println("До удаления: " + termstr);
-                termstr.delete(i - 1, i + 2);
-                System.out.println("После удаления: " + termstr);
+
+            if (calculateString.charAt(i) == '/') {
+
+
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
                 c = a / b;
+
                 System.out.println("Результат: " + c);
-                termstr.insert(i - 1, c.toString());
-                System.out.println("Итог: " + termstr);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
                 break;
             }
         }
 
-        for (int i = 0; i < termstr.length(); i++) {
-            if ((termstr.charAt(i) == '*') || (termstr.charAt(i) == '/')) {
-                parse(termstr.toString());
+        for (int i = 0; i < calculateString.length(); i++) {
+            if ((calculateString.charAt(i) == '*') || (calculateString.charAt(i) == '/')) {
+                calculation(calculateString.toString());
             }
         }
+    }
 
-        for (int i = 0; i < termstr.length(); i++) {
-            if (termstr.charAt(i) == '+') {
-                a = Integer.parseInt(String.valueOf(termstr.charAt(i - 1)));
-                b = Integer.parseInt(String.valueOf(termstr.charAt(i + 1)));
-                System.out.println("Спарсенное выражение: " + a + termstr.charAt(i) + b);
-                System.out.println("До удаления: " + termstr);
-                termstr.delete(i - 1, i + 2);
-                System.out.println("После удаления: " + termstr);
+    private void addsub() {
+
+        int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
+
+        double a, b; // переменные для операндов
+        Double c = null; // переменная для результата вычисления двух операндов
+
+        for (int i = 0; i < calculateString.length(); i++) {
+            if ((calculateString.charAt(i) == '+') && (sign == true)) {
+
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
                 c = a + b;
+
                 System.out.println("Результат: " + c);
-                termstr.insert(i - 1, c.toString());
-                System.out.println("Итог: " + termstr);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
+                break;
+
+            } else if ((calculateString.charAt(i) == '+') && (sign == false)) {
+
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                if (a <= b) {
+                    c = b - a;
+                    sign = true;
+                } else {
+                    c = a - b;
+                }
+
+                System.out.println("Результат: " + c);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
                 break;
             }
-            if (termstr.charAt(i) == '-') {
-                a = Integer.parseInt(String.valueOf(termstr.charAt(i - 1)));
-                b = Integer.parseInt(String.valueOf(termstr.charAt(i + 1)));
-                System.out.println("Спарсенное выражение: " + a + termstr.charAt(i) + b);
-                System.out.println("До удаления: " + termstr);
-                termstr.delete(i - 1, i + 2);
-                System.out.println("После удаления: " + termstr);
-                c = a - b;
+
+            if ((calculateString.charAt(i) == '-') && (sign == true)) {
+
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                if (a >= b) {
+                    c = a - b;
+                } else if (b > a) {
+                    c = b - a;
+                    sign = false;
+                }
+
                 System.out.println("Результат: " + c);
-                termstr.insert(i - 1, c.toString());
-                System.out.println("Итог: " + termstr);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
+                break;
+
+            } else if ((calculateString.charAt(i) == '-') && (sign == false)) {
+
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                c = a + b;
+
+                System.out.println("Результат: " + c);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
                 break;
             }
         }
 
-        for (int i = 0; i < termstr.length(); i++) {
-            if ((termstr.charAt(i) == '+') || (termstr.charAt(i) == '-')) {
-                parse(termstr.toString());
+        for (int i = 0; i < calculateString.length(); i++) {
+            if ((calculateString.charAt(i) == '+') || (calculateString.charAt(i) == '-')) {
+                calculation(calculateString.toString());
             }
         }
+    }
+
+    // вычисление выражения
+    public StringBuilder calculation(String input) {
+
+        //int[] CharsPosition = new int[arraySizeCalculation(input) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
+
+        double a, b; // переменные для операндов
+        Double c = null; // переменная для результата вычисления двух операндов
+
+        calculateString.delete(0, calculateString.length());
+        calculateString.append(input);
+
+        // первый приоритет - скобки
+        brackets();
+
+        /*for (int i = 0; i < calculateString.length(); i++) {
+
+            if (calculateString.charAt(i) == '(') {
+
+                openBracket = i;
+
+            }
+            if (calculateString.charAt(i) == ')') {
+
+                closeBracket = i;
+
+                String newСalculateString;
+                newСalculateString = calculateString.substring(openBracket + 1, closeBracket);
+                System.out.println("Выражение в скобках: " + newСalculateString);
+
+                calculateString.delete(openBracket, closeBracket + 1);
+                System.out.println("После удаления выражения в скобках из основной строки: " + calculateString);
+
+                StringBuilder mainString = new StringBuilder(calculateString);
+                System.out.println("Новая строка без выражения в скобках: " + mainString);
+
+                calculation(newСalculateString);
+
+                mainString.insert(openBracket, calculateString.toString());
+                System.out.println("Новая строка с результатом выражения в скобоках: " + mainString);
+
+                calculateString.delete(0, calculateString.length());
+                calculateString.insert(0, mainString.toString());
+
+                System.out.println("Исходная строка с результатом выражения в скобоках: " + calculateString);
+
+                calculation(calculateString.toString());
+            }
+        }*/
+
+        // второй приоритет минус перед выражением
+        minuser();
+
+        /*if (calculateString.charAt(0) == '-') {
+            sign = false;
+            calculation(calculateString.delete(0, 1).toString());
+        }*/
+
+        // третий приоритет умножения/деление
+        multdiv();
+
+        /*for (int i = 0; i < calculateString.length(); i++) {
+
+            if (calculateString.charAt(i) == '*') {
+
+                int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2];
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                c = a * b;
+
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
+                break;
+            }
+
+            if (calculateString.charAt(i) == '/') {
+
+                int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2];
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                c = a / b;
+
+                System.out.println("Результат: " + c);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
+                break;
+            }
+        }
+
+        for (int i = 0; i < calculateString.length(); i++) {
+            if ((calculateString.charAt(i) == '*') || (calculateString.charAt(i) == '/')) {
+                calculation(calculateString.toString());
+            }
+        }*/
+
+        // четвертый приоритет сложение/вычитание
+        addsub();
+
+        /*for (int i = 0; i < calculateString.length(); i++) {
+            if ((calculateString.charAt(i) == '+') && (sign == true)) {
+
+                int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2];
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+
+
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                    }
+                }
+
+                //System.out.println("vasia  " + calculateString + "| start - ");
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                c = a + b;
+
+                System.out.println("Результат: " + c);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
+                break;
+
+            } else if ((calculateString.charAt(i) == '+') && (sign == false)) {
+
+                int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2];
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                if (a <= b) {
+                    c = b - a;
+                    sign = true;
+                } else {
+                    c = a - b;
+                }
+
+                System.out.println("Результат: " + c);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
+                break;
+            }
+
+            if ((calculateString.charAt(i) == '-') && (sign == true)) {
+
+                int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2];
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                if (a >= b) {
+                    c = a - b;
+                } else if (b > a) {
+                    c = b - a;
+                    sign = false;
+                }
+
+                System.out.println("Результат: " + c);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
+                break;
+
+            } else if ((calculateString.charAt(i) == '-') && (sign == false)) {
+
+                int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2];
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                        System.out.println("TEST  " + startPosition + "    " + finishPosition);
+                    }
+                }
+
+                a = Double.parseDouble(calculateString.substring(startPosition, i));
+                b = Double.parseDouble(calculateString.substring(i + 1, finishPosition));
+
+                calculateString.delete(startPosition, finishPosition);
+
+                c = a + b;
+
+                System.out.println("Результат: " + c);
+                calculateString.insert(startPosition, c.toString());
+                System.out.println("Итог: " + calculateString);
+                break;
+            }
+        }
+
+        for (int i = 0; i < calculateString.length(); i++) {
+            if ((calculateString.charAt(i) == '+') || (calculateString.charAt(i) == '-')) {
+                calculation(calculateString.toString());
+            }
+        }*/
+
 
         /*for (int i = 0; i < cstring.length(); i++) {
             if (cstring.charAt(i) == '+') {
@@ -192,6 +750,6 @@ class Decimal extends Calculator {
         }
 
         System.out.print("Result of term " + str + " is: ");*/
-        return Integer.parseInt(termstr.toString());
+        return calculateString;
     }
 }
