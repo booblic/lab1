@@ -2,7 +2,7 @@
 class Decimal extends Calculator {
 
     private String expression; // исходная строка
-    private StringBuilder result;
+    private String result;
 
     private StringBuilder calculateString = new StringBuilder(); // строка для вычисления выражения
     private int closeBracket, openBracket; // переменные для хранения позиции скобок
@@ -15,16 +15,14 @@ class Decimal extends Calculator {
 
     }
 
-    public void start() {
+    public String start() {
 
-        result = calculation(expression);
+        result = calculation(expression).toString();
 
-        if (sign == true) {
-            System.out.println("Result of term " + expression + " is: " + result);
-        } else {
-            result.insert(0, "-");
-            System.out.println("Result of term " + expression + " is: " + result);
+        if (sign == false) {
+            result = "-" + result;
         }
+        return result;
     }
 
     // уберает лишние пробелы
@@ -105,31 +103,38 @@ class Decimal extends Calculator {
         double a, b; // переменные для операндов
         Double c = null; // переменная для результата вычисления двух операндов
 
+        // перебираем строку посимвольно
         for (int i = 0; i < calculateString.length(); i++) {
 
+            // если встретили знак умножения
             if (calculateString.charAt(i) == '*') {
 
+                // первый жлемент массива обозанчаеи начало строки, поэтому он всегода равен 0
                 CharsPosition[0] = 0;
 
+                // перебираем строку для нахождения позиций символов, k - номер символа в строке
                 for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
 
+                    // если находим символ
                     if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
                             (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
                             (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
 
-                        CharsPosition[k] = j + 1;
+                        CharsPosition[k] = j + 1; // запоминаем его порядковый номер и место в строке на котором он находится
                         k++;
                     }
 
-                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1; // если встретили число, то последнему элементу массива присваиваем размер строки +1. Единицу прибавляем, чтобы решить проблему, возникающую в случае, если после подвыражения не последнее
 
                 }
 
+                // перебираем полученный массив
                 for (int k = 0; k < CharsPosition.length; k++) {
 
+                    // если нашли символ соответствующий умножению
                     if (CharsPosition[k] == i + 1) {
-                        startPosition = CharsPosition[k - 1];
-                        finishPosition = CharsPosition[k + 1] - 1;
+                        startPosition = CharsPosition[k - 1]; // то подвыражение начинается от предыдущего символа
+                        finishPosition = CharsPosition[k + 1] - 1; // до следующего символа - 1, так как строку мы перебирали с 0
                     }
                 }
 

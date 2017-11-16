@@ -7,19 +7,20 @@ import java.util.Scanner;
 public class Test {
 
     public static void action(Calculator calc) {
-        calc.start();
+        System.out.println(calc.start());
     }
 
     public static void main(String[] args) {
 
         Menu menu = new Menu();
 
+        // добавление пункта меню для ввода выражения с клавиатуры
         menu.addEntry(new MenuEntry("Ввод выражения с клавиатуры.") {
             @Override
             public void run() {
 
-                String line = null;
-                String numberSystems = null;
+                String line = null; // переменная для хранения выражения
+                String numberSystems = null; // переменная для хранения системы счисления
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -34,7 +35,7 @@ public class Test {
                     e.printStackTrace();
                 }
 
-                int openBracketNumber = 0, closeBracketNumber = 0;
+                int openBracketNumber = 0, closeBracketNumber = 0; // переменные для хранения количества открывающихся и закрывающихся скобок
 
                 for (int j = 0; j < line.length(); j++) {
                     if (line.charAt(j) == '(') { openBracketNumber++; }
@@ -63,11 +64,14 @@ public class Test {
 
             }
         });
+
+        // добавление пункта меню для считывания выражения из файла (имя файла передается в качестве параметра командной строки Run->Edit Configuration->Program arguments)
         menu.addEntry(new MenuEntry("Считывание выражения из файла.") {
             @Override
             public void run() {
-                String str = null;
-                String substr = null;
+
+                String str = null; // переменная для хранения выражения
+                String substr = null; // переменная для хранения системы счисления
                 int i = 0;
 
                 try(BufferedReader bufferedReader = new BufferedReader(new FileReader(args[0]))) {

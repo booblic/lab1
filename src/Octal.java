@@ -1,7 +1,7 @@
 class Octal extends Calculator {
 
     private String expression; // исходная строка
-    private StringBuilder result;
+    private String result;
 
     private StringBuilder calculateString = new StringBuilder(); // строка для вычисления выражения
     private int closeBracket, openBracket; // переменные для хранения позиции скобок
@@ -14,18 +14,14 @@ class Octal extends Calculator {
 
     }
 
-    public void start() {
+    public String start() {
 
-        result = calculation(expression);
+        result = calculation(expression).toString();
 
-        if (sign == true) {
-            String res = Integer.toString(Integer.parseInt(result.toString()), 8);
-            System.out.println("Result of term " + expression + " is: " + res);
-        } else {
-            result.insert(0, "-");
-            String res = Integer.toString(Integer.parseInt(result.toString()), 8);
-            System.out.println("Result of term " + expression + " is: " + res);
+        if (sign == false) {
+            result = "-" + result;
         }
+        return result;
     }
 
     // уберает лишние пробелы
@@ -139,7 +135,7 @@ class Octal extends Calculator {
 
                 c = a * b;
 
-                calculateString.insert(startPosition, c.toString());
+                calculateString.insert(startPosition, Integer.toOctalString(c));
                 System.out.println("Итог: " + calculateString);
                 break;
             }
@@ -183,7 +179,7 @@ class Octal extends Calculator {
                 c = a / b;
 
                 System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, c.toString());
+                calculateString.insert(startPosition, Integer.toOctalString(c));
                 System.out.println("Итог: " + calculateString);
                 break;
             }
@@ -239,7 +235,7 @@ class Octal extends Calculator {
                 c = a + b;
 
                 System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, c.toString());
+                calculateString.insert(startPosition, Integer.toOctalString(c));
                 System.out.println("Итог: " + calculateString);
                 break;
 
@@ -281,7 +277,7 @@ class Octal extends Calculator {
                 }
 
                 System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, c.toString());
+                calculateString.insert(startPosition, Integer.toOctalString(c));
                 System.out.println("Итог: " + calculateString);
                 break;
             }
@@ -324,7 +320,7 @@ class Octal extends Calculator {
                 }
 
                 System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, c.toString());
+                calculateString.insert(startPosition, Integer.toOctalString(c));
                 System.out.println("Итог: " + calculateString);
                 break;
 
@@ -361,7 +357,7 @@ class Octal extends Calculator {
                 c = a + b;
 
                 System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, c.toString());
+                calculateString.insert(startPosition, Integer.toOctalString(c));
                 System.out.println("Итог: " + calculateString);
                 break;
             }
