@@ -18,6 +18,10 @@ public class Menu {
                 isExit = true;
             }
         });
+
+        addEntry(new MenuFirst("Ввод выражения с клавиатуры."));
+
+        addEntry(new MenuSecond("Считывание выражения из файла."));
     }
 
     public void run() {

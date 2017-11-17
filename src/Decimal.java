@@ -26,7 +26,7 @@ class Decimal extends Calculator {
     }
 
     // уберает лишние пробелы
-    private String formater(String input) {
+    public String formater(String input) {
 
         if (input == null) return null;
 
@@ -34,7 +34,7 @@ class Decimal extends Calculator {
     }
 
     // вычисляет размер массива для хранения позиции знаков в выражении/подвыражении
-    private int arraySizeCalculation(String input) {
+    public int arraySizeCalculation(String input) {
 
         int slots = 0;
 
@@ -50,7 +50,7 @@ class Decimal extends Calculator {
         return slots;
     }
 
-    private void brackets() {
+    public void brackets() {
 
         for (int i = 0; i < calculateString.length(); i++) {
 
@@ -89,14 +89,14 @@ class Decimal extends Calculator {
         }
     }
 
-    private void minuser() {
+    public void minuser() {
         if (calculateString.charAt(0) == '-') {
             sign = false;
             calculation(calculateString.delete(0, 1).toString());
         }
     }
 
-    private void multdiv() {
+    public void multdiv() {
 
         int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
 
@@ -203,7 +203,7 @@ class Decimal extends Calculator {
         }
     }
 
-    private void addsub() {
+    public void addsub() {
 
         int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
 
@@ -281,9 +281,9 @@ class Decimal extends Calculator {
 
                 if (a <= b) {
                     c = b - a;
-                    sign = true;
                 } else {
                     c = a - b;
+                    sign = true;
                 }
 
                 System.out.println("Результат: " + c);

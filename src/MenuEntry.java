@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 public abstract class MenuEntry {
     private String title;
 

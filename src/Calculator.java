@@ -1,5 +1,10 @@
 abstract class Calculator {
-    // проверка на скобки и на наличие арифметических знаков между числами + рекурсивное вычисление выражения
-    public abstract StringBuilder calculation(String str);
+    public abstract String formater(String input);
     public abstract String start();
+    public abstract int arraySizeCalculation(String input);
+    public abstract void brackets();
+    public abstract void minuser();
+    public abstract void multdiv();
+    public abstract void addsub();
+    public abstract StringBuilder calculation(String str);
 }
