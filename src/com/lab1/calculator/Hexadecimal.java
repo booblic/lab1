@@ -43,7 +43,8 @@ public class Hexadecimal extends Calculator {
 
             if ((input.charAt(i) == '+') || (input.charAt(i) == '-') ||
                     (input.charAt(i) == '*') || (input.charAt(i) == '/') ||
-                    (input.charAt(i) == ')') || (input.charAt(i) == '(')) {
+                    (input.charAt(i) == ')') || (input.charAt(i) == '(') ||
+                    (calculateString.charAt(i) == '^')) {
 
                 slots++;
             }
@@ -93,6 +94,61 @@ public class Hexadecimal extends Calculator {
         if (calculateString.charAt(0) == '-') {
             sign = false;
             calculation(calculateString.delete(0, 1).toString());
+        }
+    }
+
+    public void exponent() {
+
+        int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
+
+        int a, b; // переменные для операндов
+        Double c = null; // переменная для результата вычисления двух операндов
+
+        for (int i = 0; i < calculateString.length(); i++) {
+
+            if (calculateString.charAt(i) == '^') {
+
+                CharsPosition[0] = 0;
+
+                for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
+
+                    if ((calculateString.charAt(j) == '+') || (calculateString.charAt(j) == '-') ||
+                            (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
+                            (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')') ||
+                            (calculateString.charAt(j) == '^')) {
+
+                        CharsPosition[k] = j + 1;
+                        k++;
+                    }
+
+                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+
+                }
+
+                for (int k = 0; k < CharsPosition.length; k++) {
+
+                    if (CharsPosition[k] == i + 1) {
+                        startPosition = CharsPosition[k - 1];
+                        finishPosition = CharsPosition[k + 1] - 1;
+                    }
+                }
+
+                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 16);
+                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 16);
+
+                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
+                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
+
+                calculateString.delete(startPosition, finishPosition);
+
+                c = Math.pow(a, b);
+
+                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c.intValue());
+                calculateString.insert(startPosition, Integer.toHexString(c.intValue()));
+                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
+                break;
+            }
         }
     }
 
@@ -409,10 +465,13 @@ public class Hexadecimal extends Calculator {
         // второй приоритет минус перед выражением
         minuser();
 
-        // третий приоритет умножения/деление
+        // третий приоритет возведение в степень
+        exponent();
+
+        // четвернтый приоритет умножения/деление
         multdiv();
 
-        // четвертый приоритет сложение/вычитание
+        // пятый приоритет сложение/вычитание
         addsub();
 
         return calculateString;
