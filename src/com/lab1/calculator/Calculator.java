@@ -1,4 +1,6 @@
-abstract class Calculator {
+package com.lab1.calculator;
+
+public abstract class Calculator {
     public abstract String formater(String input);
     public abstract String start();
     public abstract int arraySizeCalculation(String input);

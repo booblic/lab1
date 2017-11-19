@@ -1,6 +1,9 @@
-import javax.swing.*;
+package com.lab1.menu;
+
+import com.lab1.calculator.*;
+import com.lab1.constant.ClassOfConstant;
+
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
@@ -36,7 +39,7 @@ public class MenuSecond extends MenuEntry {
             System.out.println(substr);
 
         } else {
-            System.out.println(ClassOfConstant.EMPTYSTRING);
+            System.out.println(ClassOfConstant.EMPTSTRING);
         }
 
         int openBracketNumber = 0, closeBracketNumber = 0;

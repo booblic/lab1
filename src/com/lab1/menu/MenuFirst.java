@@ -1,3 +1,8 @@
+package com.lab1.menu;
+
+import com.lab1.calculator.*;
+import com.lab1.constant.ClassOfConstant;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,12 +25,12 @@ public class MenuFirst extends MenuEntry {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.print(ClassOfConstant.ENTRYNUMBERSYSTEM);
+            System.out.print(ClassOfConstant.ENTRNUMBERSYSTEM);
             numberSystems = reader.readLine();
-            System.out.println("Введеная системв счисления: " + numberSystems);
-            System.out.print(ClassOfConstant.ENTRYEXPRESSION);
+            System.out.println(ClassOfConstant.ENTEREDNUMBERSYSTEM + numberSystems);
+            System.out.print(ClassOfConstant.ENTREXPRESSION);
             line = reader.readLine();
-            System.out.println("Введеная строка: " + line);
+            System.out.println(ClassOfConstant.ENTEREDSTRING + line);
         } catch (IOException e) {
             e.printStackTrace();
         }

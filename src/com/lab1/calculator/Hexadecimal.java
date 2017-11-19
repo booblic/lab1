@@ -1,4 +1,8 @@
-class Binary extends Calculator {
+package com.lab1.calculator;
+
+import com.lab1.constant.ClassOfConstant;
+
+public class Hexadecimal extends Calculator {
 
     private String expression; // исходная строка
     private String result;
@@ -8,7 +12,7 @@ class Binary extends Calculator {
     private boolean sign = true; // переменная для хранения знака
     private int finishPosition = 0, startPosition = 0; // переменные для хранения позиции начала и конца подвыражения
 
-    public Binary(String input) {
+    public Hexadecimal(String input) {
 
         expression = formater(input);
 
@@ -62,25 +66,24 @@ class Binary extends Calculator {
 
                 String newСalculateString;
                 newСalculateString = calculateString.substring(openBracket + 1, closeBracket);
-                System.out.println("Выражение в скобках: " + newСalculateString);
+                System.out.println(ClassOfConstant.BRECKETSEXPRESSION + newСalculateString);
 
                 calculateString.delete(openBracket, closeBracket + 1);
-                System.out.println("После удаления выражения в скобках из основной строки: " + calculateString);
+                System.out.println(ClassOfConstant.AFTERDELETEDBRECKETSEXPRESSION + calculateString);
 
                 StringBuilder mainString = new StringBuilder(calculateString);
-                System.out.println("Новая строка без выражения в скобках: " + mainString);
+                System.out.println(ClassOfConstant.NEWSTRINGWITHOUTBRECKETSEXPRESSION + mainString);
 
                 calculation(newСalculateString);
 
                 mainString.insert(openBracket, calculateString.toString());
-                System.out.println("Новая строка с результатом выражения в скобоках: " + mainString);
+                System.out.println(ClassOfConstant.NEWSTRINGWITHRESUALTBRECKETSEXPRESSION + mainString);
 
                 calculateString.delete(0, calculateString.length());
                 calculateString.insert(0, mainString.toString());
 
-                System.out.println("Исходная строка с результатом выражения в скобоках: " + calculateString);
+                System.out.println(ClassOfConstant.STRINGWITHRESUALTBRECKETSEXPRESSION + calculateString);
 
-                //calculation(calculateString.toString());
                 brackets();
             }
         }
@@ -128,15 +131,20 @@ class Binary extends Calculator {
                     }
                 }
 
-                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
-                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
+                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 16);
+                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 16);
+
+                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
+                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
                 c = a * b;
 
-                calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println("Итог: " + calculateString);
+                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                calculateString.insert(startPosition, Integer.toHexString(c));
+                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
                 break;
             }
 
@@ -166,28 +174,31 @@ class Binary extends Calculator {
                     }
                 }
 
-                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
-                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
+                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 16);
+                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 16);
+
+                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
+                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
                 if (b == 0) {
-                    System.out.println("Деление на нуль!");
+                    System.out.println(ClassOfConstant.DIVIZIONBYZERO);
                     return;
                 }
 
                 c = a / b;
 
-                System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println("Итог: " + calculateString);
+                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                calculateString.insert(startPosition, Integer.toHexString(c));
+                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
                 break;
             }
         }
 
         for (int i = 0; i < calculateString.length(); i++) {
             if ((calculateString.charAt(i) == '*') || (calculateString.charAt(i) == '/')) {
-                //calculation(calculateString.toString());
                 multdiv();
             }
         }
@@ -227,16 +238,20 @@ class Binary extends Calculator {
                     }
                 }
 
-                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
-                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
+                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 16);
+                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 16);
+
+                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
+                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
                 c = a + b;
 
-                System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println("Итог: " + calculateString);
+                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                calculateString.insert(startPosition, Integer.toHexString(c));
+                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
                 break;
 
             } else if ((calculateString.charAt(i) == '+') && (sign == false)) {
@@ -264,8 +279,12 @@ class Binary extends Calculator {
                     }
                 }
 
-                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
-                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
+                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 16);
+                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 16);
+
+                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
+                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
@@ -276,9 +295,9 @@ class Binary extends Calculator {
                     sign = true;
                 }
 
-                System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println("Итог: " + calculateString);
+                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                calculateString.insert(startPosition, Integer.toHexString(c));
+                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
                 break;
             }
 
@@ -307,8 +326,12 @@ class Binary extends Calculator {
                     }
                 }
 
-                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
-                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
+                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 16);
+                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 16);
+
+                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
+                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
@@ -319,9 +342,9 @@ class Binary extends Calculator {
                     sign = false;
                 }
 
-                System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println("Итог: " + calculateString);
+                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                calculateString.insert(startPosition, Integer.toHexString(c));
+                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
                 break;
 
             } else if ((calculateString.charAt(i) == '-') && (sign == false)) {
@@ -349,23 +372,26 @@ class Binary extends Calculator {
                     }
                 }
 
-                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
-                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
+                a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 16);
+                b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 16);
+
+                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
+                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
                 c = a + b;
 
-                System.out.println("Результат: " + c);
-                calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println("Итог: " + calculateString);
+                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                calculateString.insert(startPosition, Integer.toHexString(c));
+                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
                 break;
             }
         }
 
         for (int i = 0; i < calculateString.length(); i++) {
             if ((calculateString.charAt(i) == '+') || (calculateString.charAt(i) == '-')) {
-                //calculation(calculateString.toString());
                 addsub();
             }
         }
