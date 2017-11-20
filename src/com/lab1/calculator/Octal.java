@@ -4,20 +4,50 @@ import com.lab1.constant.ClassOfConstant;
 
 public class Octal extends Calculator {
 
-    private String expression; // исходная строка
+    /**
+     * Начальная строка
+     */
+    private String expression;
+
+    /**
+     * Результат выражения
+     */
     private String result;
 
-    private StringBuilder calculateString = new StringBuilder(); // строка для вычисления выражения
-    private int closeBracket, openBracket; // переменные для хранения позиции скобок
-    private boolean sign = true; // переменная для хранения знака
-    private int finishPosition = 0, startPosition = 0; // переменные для хранения позиции начала и конца подвыражения
+    /**
+     * Строка для записи промежуточных результатов
+     */
+    private StringBuilder calculateString = new StringBuilder();
 
+    /**
+     * Поля для хранения позиции скобок
+     */
+    private int closeBracket, openBracket;
+
+    /**
+     * Поле для хранения знака выражения: true - плюс, false - минус
+     */
+    private boolean sign = true;
+
+    /**
+     * Поля для хранения позиции начала и конца подвыражения
+     */
+    private int finishPosition = 0, startPosition = 0;
+
+    /**
+     * Конструктор - создание нового объекта
+     * @param input - неотформатированная строка, содержащая исходное выражение
+     */
     public Octal(String input) {
 
         expression = formater(input);
 
     }
 
+    /**
+     * Метод, который вызывается для начала расчета выражения
+     * @return result - результат выражения
+     */
     public String start() {
 
         result = calculation(expression).toString();
@@ -28,13 +58,21 @@ public class Octal extends Calculator {
         return result;
     }
 
-    // уберает лишние пробелы
+    /**
+     * Метод, который уберает лишние пробелы из полученной строки
+     * @param input - неотформатированная строка, содержащая исходное выражение
+     * @return  строка содержащая исходное выражение без пробелов
+     */
     public String formater(String input) {
         if (input == null) return null;
         return input.replaceAll(" ", "");
     }
 
-    // вычисляет размер массива для хранения позиции знаков в выражении/подвыражении
+    /**
+     * Метод который вычисляет размера массива для хранения позиции знаков в выражении/подвыражении
+     * @param input - исходное выражение
+     * @return slots - размер массива
+     */
     public int arraySizeCalculation(String input) {
 
         int slots = 0;
@@ -44,7 +82,7 @@ public class Octal extends Calculator {
             if ((input.charAt(i) == '+') || (input.charAt(i) == '-') ||
                     (input.charAt(i) == '*') || (input.charAt(i) == '/') ||
                     (input.charAt(i) == ')') || (input.charAt(i) == '(') ||
-                    (calculateString.charAt(i) == ')')) {
+                    (input.charAt(i) == ')')) {
 
                 slots++;
             }
@@ -52,6 +90,13 @@ public class Octal extends Calculator {
         return slots;
     }
 
+    /**
+     * Первый приоритет
+     * Метод ищет выражение в скобках и если оно есть, вызывает для него метод
+     * @see Octal#calculation(String)
+     * который расчитывает это выражение и возварщает результат
+     * Для поиска следующих скобок, метод содержит рекурсию
+     */
     public void brackets() {
 
         for (int i = 0; i < calculateString.length(); i++) {
@@ -90,6 +135,11 @@ public class Octal extends Calculator {
         }
     }
 
+    /**
+     * Второй приоритет
+     * Если перед выражением стоит знак минус, то метод менят зачение знаковой переменной
+     * @see Octal#sign
+     */
     public void minuser() {
         if (calculateString.charAt(0) == '-') {
             sign = false;
@@ -97,6 +147,11 @@ public class Octal extends Calculator {
         }
     }
 
+    /**
+     * Третий приоритет
+     * Вычисление подвыражения, содержащего возведение в степень
+     * Если в строке не одно возведение в степень, то метод вызывается рекурсивно
+     */
     public void exponent() {
 
         int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
@@ -150,8 +205,19 @@ public class Octal extends Calculator {
                 break;
             }
         }
+
+        for (int i = 0; i < calculateString.length(); i++) {
+            if (calculateString.charAt(i) == '^') {
+                exponent();
+            }
+        }
     }
 
+    /**
+     * Четвертый приоритет
+     * Вычисление подвыражения, содержащего деление и/или умножение
+     * Если в строке есть еще операции деления и/или умножения, то метод вызывается рекурсивно
+     */
     public void multdiv() {
 
         int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
@@ -260,6 +326,11 @@ public class Octal extends Calculator {
         }
     }
 
+    /**
+     * Пятый приоритет
+     * Вычисление подвыражения, содержащего сложение и/или умножение, с учетом знаковой переменной
+     * Если в строке есть еще операции сложения и/или умножения, то метод вызывается рекурсивно
+     */
     public void addsub() {
 
         int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
@@ -453,7 +524,11 @@ public class Octal extends Calculator {
         }
     }
 
-    // вычисление выражения
+    /**
+     * Запись в строку очередного подвыражения и вызов методов для расчета в порядки приоритета
+     * @param input - выражения/подвыражения
+     * @return calculateString - результат выражения/подвыражения
+     */
     public StringBuilder calculation(String input) {
 
         calculateString.delete(0, calculateString.length());

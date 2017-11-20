@@ -8,20 +8,47 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * Класс для второго пункта меню, соответсвующего вводу выражения с клавиатуры
+ * @author Кирилл
+ * @version 1.0
+ */
 public class MenuSecond extends MenuEntry {
 
-    String str = null; // переменная для хранения выражения
-    String substr = null; // переменная для хранения системы счисления
-    int i = 0;
+    /**
+     * Переменная для хранения строки считанной из файла
+     */
+    private String str = null;
 
+    /**
+     * Переменная для хранения выражения
+     */
+    private String substr = null;
+
+    /**
+     * Переменная для хранения системы счисленияа
+     */
+    private int i = 0;
+
+    /**
+     * Конструктор вызывающий конструктор базового (абстрактного) класса
+     * @param input - заглавие мпункта меню
+     */
     public MenuSecond(String input) {
         super(input);
     }
 
+    /**
+     * Метод принимающий любой объект класса насленика Calculator и вызывающий соответсвующий метод для начала расчет выражения
+     * @param calc - объект класса насленика Calculator
+     */
     public void action(Calculator calc) {
         System.out.println(calc.start());
     }
 
+    /**
+     * Метод содержащий последовательнсть действий пункта меню
+     */
     public void run() {
 
         try(BufferedReader bufferedReader = new BufferedReader(new FileReader("file.txt"))) {
@@ -34,9 +61,9 @@ public class MenuSecond extends MenuEntry {
 
         if (scanner.hasNext()) {
             i = scanner.nextInt();
-            System.out.println(i);
+            System.out.println(ClassOfConstant.READEDNUMBERSYSTEM + i);
             substr = scanner.nextLine().trim();
-            System.out.println(substr);
+            System.out.println(ClassOfConstant.READEDEXPRESSION + substr);
 
         } else {
             System.out.println(ClassOfConstant.EMPTSTRING);

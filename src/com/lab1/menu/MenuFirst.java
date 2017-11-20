@@ -7,19 +7,42 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Класс для первого пункта меню, соответсвующему считыванию выражения из файла
+ * @author Кирилл
+ * @version 1.0
+ */
 public class MenuFirst extends MenuEntry {
 
-    String line = null; // переменная для хранения выражения
-    String numberSystems = null; // переменная для хранения системы счисления
+    /**
+     * Переменная для хранения выражения введенного с клавиатуры
+     */
+    private String line = null;
 
+    /**
+     * Переменная для хранения системы счисления
+     */
+    private String numberSystems = null;
+
+    /**
+     * Конструктор вызывающий конструктор базового (абстрактного) класса
+     * @param input - заглавие мпункта меню
+     */
     public MenuFirst(String input) {
         super(input);
     }
 
+    /**
+     * Метод принимающий любой объект класса насленика Calculator и вызывающий соответсвующий метод для начала расчет выражения
+     * @param calc - объект класса насленика Calculator
+     */
     public void action(Calculator calc) {
         System.out.println(calc.start());
     }
 
+    /**
+     * Метод содержащий последовательнсть действий пункта меню
+     */
     public void run() {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
