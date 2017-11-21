@@ -49,7 +49,13 @@ public class MenuFirst extends MenuEntry {
 
         try {
             System.out.print(ClassOfConstant.ENTR_SYSREM_NUMBER);
-            numberSystems =  Integer.parseInt(reader.readLine());
+
+            try {
+                numberSystems =  Integer.parseInt(reader.readLine());
+            } catch (NumberFormatException exp) {
+                System.out.println(ClassOfConstant.WRONG_SYSREM_NUMBER);
+                return;
+            }
 
             if ((numberSystems != 2) && (numberSystems != 8) && (numberSystems != 10) && (numberSystems != 16)) {
                 System.out.println(ClassOfConstant.WRONG_SYSREM_NUMBER);
@@ -77,16 +83,16 @@ public class MenuFirst extends MenuEntry {
 
         switch (numberSystems) {
             case 2:
-                action(new Binary(line));
+                action(Singleton.getBinary(line));
                 break;
             case 8:
-                action(new Octal(line));
+                action(Singleton.getOctal(line));
                 break;
             case 10:
-                action(new Decimal(line));
+                action(Singleton.getDecimal(line));
                 break;
             case 16:
-                action(new Hexadecimal(line));
+                action(Singleton.getHexadecimal(line));
                 break;
         }
 

@@ -89,16 +89,16 @@ public class MenuSecond extends MenuEntry {
 
         switch (numberSystems) {
             case 2:
-                action(new Binary(line));
+                action(Singleton.getBinary(line));
                 break;
             case 8:
-                action(new Octal(line));
+                action(Singleton.getOctal(line));
                 break;
             case 10:
-                action(new Decimal(line));
+                action(Singleton.getDecimal(line));
                 break;
             case 16:
-                action(new Hexadecimal(line));
+                action(Singleton.getHexadecimal(line));
                 break;
         }
     }

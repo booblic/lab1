@@ -46,6 +46,7 @@ public class Menu {
     public void run() {
 
         String line = null;
+        int choice = 0;
 
         while (!isExit) {
             printMenu();
@@ -53,14 +54,15 @@ public class Menu {
 
             try {
                 line = reader.readLine();
+                choice = Integer.parseInt(line);
             } catch (IOException exp) {
                 System.out.println(exp);
             } catch (NumberFormatException exp) {
                 System.out.println(ClassOfConstant.NOT_A_NUMBER);
+                continue;
             }
 
             try {
-                int choice = Integer.parseInt(line);
                 MenuEntry entry = entries.get(choice - 1);
                 entry.run();
             } catch (IndexOutOfBoundsException exp) {
