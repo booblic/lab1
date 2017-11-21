@@ -7,7 +7,7 @@ public abstract class Calculator {
     public abstract void brackets();
     public abstract void minuser();
     public abstract void exponent();
-    public abstract void multdiv();
-    public abstract void addsub();
+    public abstract void multDiv();
+    public abstract void addSub();
     public abstract StringBuilder calculation(String str);
 }

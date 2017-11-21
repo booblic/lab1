@@ -20,9 +20,9 @@ public class MenuFirst extends MenuEntry {
     private String line = null;
 
     /**
-     * Переменная для хранения системы счисления
+     * Переменная для хранения системы счисленияа
      */
-    private String numberSystems = null;
+    private int numberSystems = 0;
 
     /**
      * Конструктор вызывающий конструктор базового (абстрактного) класса
@@ -48,12 +48,17 @@ public class MenuFirst extends MenuEntry {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            System.out.print(ClassOfConstant.ENTRNUMBERSYSTEM);
-            numberSystems = reader.readLine();
-            System.out.println(ClassOfConstant.ENTEREDNUMBERSYSTEM + numberSystems);
-            System.out.print(ClassOfConstant.ENTREXPRESSION);
+            System.out.print(ClassOfConstant.ENTR_SYSREM_NUMBER);
+            numberSystems =  Integer.parseInt(reader.readLine());
+
+            if ((numberSystems != 2) && (numberSystems != 8) && (numberSystems != 10) && (numberSystems != 16)) {
+                System.out.println(ClassOfConstant.WRONG_SYSREM_NUMBER);
+                return;
+            }
+            System.out.println(ClassOfConstant.ENTERED_SYSREM_NUMBER + numberSystems);
+            System.out.print(ClassOfConstant.ENTR_EXPRESSION);
             line = reader.readLine();
-            System.out.println(ClassOfConstant.ENTEREDSTRING + line);
+            System.out.println(ClassOfConstant.ENTERED_STRING + line);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,21 +71,21 @@ public class MenuFirst extends MenuEntry {
         }
 
         if(openBracketNumber != closeBracketNumber) {
-            System.out.println(ClassOfConstant.NOBRECKETS);
+            System.out.println(ClassOfConstant.NO_BRECKETS);
             return;
         }
 
         switch (numberSystems) {
-            case "2":
+            case 2:
                 action(new Binary(line));
                 break;
-            case "8":
+            case 8:
                 action(new Octal(line));
                 break;
-            case "10":
+            case 10:
                 action(new Decimal(line));
                 break;
-            case "16":
+            case 16:
                 action(new Hexadecimal(line));
                 break;
         }

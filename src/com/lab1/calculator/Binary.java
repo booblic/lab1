@@ -117,23 +117,23 @@ public class Binary extends Calculator {
 
                 String newСalculateString;
                 newСalculateString = calculateString.substring(openBracket + 1, closeBracket);
-                System.out.println(ClassOfConstant.BRECKETSEXPRESSION + newСalculateString);
+                System.out.println(ClassOfConstant.BRECKETS_EXPRESSION + newСalculateString);
 
                 calculateString.delete(openBracket, closeBracket + 1);
-                System.out.println(ClassOfConstant.AFTERDELETEDBRECKETSEXPRESSION + calculateString);
+                System.out.println(ClassOfConstant.AFTER_DELETED_BRECKETS_EXPRESSION + calculateString);
 
                 StringBuilder mainString = new StringBuilder(calculateString);
-                System.out.println(ClassOfConstant.NEWSTRINGWITHOUTBRECKETSEXPRESSION + mainString);
+                System.out.println(ClassOfConstant.NEW_STRING_WITHOUT_BRECKETS_EXPRESSION + mainString);
 
                 calculation(newСalculateString);
 
                 mainString.insert(openBracket, calculateString.toString());
-                System.out.println(ClassOfConstant.NEWSTRINGWITHRESUALTBRECKETSEXPRESSION + mainString);
+                System.out.println(ClassOfConstant.NEW_STRING_WITH_RESUALT_BRECKETS_EXPRESSION + mainString);
 
                 calculateString.delete(0, calculateString.length());
                 calculateString.insert(0, mainString.toString());
 
-                System.out.println(ClassOfConstant.STRINGWITHRESUALTBRECKETSEXPRESSION + calculateString);
+                System.out.println(ClassOfConstant.STRING_WITH_RESUALT_BRECKETS_EXPRESSION + calculateString);
 
                 brackets();
             }
@@ -165,7 +165,7 @@ public class Binary extends Calculator {
      */
     public void exponent() {
 
-        int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
+        int[] charsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
 
         int a, b; // переменные для операндов
         Double c = null; // переменная для результата вычисления двух операндов
@@ -174,7 +174,7 @@ public class Binary extends Calculator {
 
             if (calculateString.charAt(i) == '^') {
 
-                CharsPosition[0] = 0;
+                charsPosition[0] = 0;
 
                 for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
 
@@ -183,36 +183,40 @@ public class Binary extends Calculator {
                             (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')') ||
                             (calculateString.charAt(j) == '^')) {
 
-                        CharsPosition[k] = j + 1;
+                        charsPosition[k] = j + 1;
                         k++;
                     }
 
-                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+                    charsPosition[charsPosition.length - 1] = calculateString.length() + 1;
 
                 }
 
-                for (int k = 0; k < CharsPosition.length; k++) {
+                for (int k = 0; k < charsPosition.length; k++) {
 
-                    if (CharsPosition[k] == i + 1) {
-                        startPosition = CharsPosition[k - 1];
-                        finishPosition = CharsPosition[k + 1] - 1;
+                    if (charsPosition[k] == i + 1) {
+                        startPosition = charsPosition[k - 1];
+                        finishPosition = charsPosition[k + 1] - 1;
                     }
                 }
 
                 a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
                 b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
 
-                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
-                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
-                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
+                System.out.println(ClassOfConstant.PARSING_NUMBER + a);
+                System.out.println(ClassOfConstant.PARSING_SIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSING_NUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
-                c = Math.pow(a, b);
+                if (!sign) {
+                    c = Math.pow(a, -b);
+                } else {
+                    c = Math.pow(a, b);
+                }
 
-                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c.intValue());
+                System.out.println(ClassOfConstant.RESUALT_SUBEXPRESSION + c.intValue());
                 calculateString.insert(startPosition, Integer.toBinaryString(c.intValue()));
-                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
+                System.out.println(ClassOfConstant.STRING_WITH_RESUALT + calculateString);
                 break;
             }
         }
@@ -223,9 +227,9 @@ public class Binary extends Calculator {
      * Вычисление подвыражения, содержащего деление и/или умножение
      * Если в строке есть еще операции деления и/или умножения, то метод вызывается рекурсивно
      */
-    public void multdiv() {
+    public void multDiv() {
 
-        int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
+        int[] charsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
 
         int a, b; // переменные для операндов
         Integer c = null; // переменная для результата вычисления двух операндов
@@ -234,7 +238,7 @@ public class Binary extends Calculator {
 
             if (calculateString.charAt(i) == '*') {
 
-                CharsPosition[0] = 0;
+                charsPosition[0] = 0;
 
                 for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
 
@@ -242,43 +246,43 @@ public class Binary extends Calculator {
                             (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
                             (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
 
-                        CharsPosition[k] = j + 1;
+                        charsPosition[k] = j + 1;
                         k++;
                     }
 
-                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+                    charsPosition[charsPosition.length - 1] = calculateString.length() + 1;
 
                 }
 
-                for (int k = 0; k < CharsPosition.length; k++) {
+                for (int k = 0; k < charsPosition.length; k++) {
 
-                    if (CharsPosition[k] == i + 1) {
-                        startPosition = CharsPosition[k - 1];
-                        finishPosition = CharsPosition[k + 1] - 1;
+                    if (charsPosition[k] == i + 1) {
+                        startPosition = charsPosition[k - 1];
+                        finishPosition = charsPosition[k + 1] - 1;
                     }
                 }
 
                 a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
                 b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
 
-                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
-                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
-                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
+                System.out.println(ClassOfConstant.PARSING_NUMBER + a);
+                System.out.println(ClassOfConstant.PARSING_SIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSING_NUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
                 c = a * b;
 
-                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                System.out.println(ClassOfConstant.RESUALT_SUBEXPRESSION + c);
                 calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
+                System.out.println(ClassOfConstant.STRING_WITH_RESUALT + calculateString);
                 break;
             }
 
             if (calculateString.charAt(i) == '/') {
 
 
-                CharsPosition[0] = 0;
+                charsPosition[0] = 0;
 
                 for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
 
@@ -286,47 +290,47 @@ public class Binary extends Calculator {
                             (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
                             (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
 
-                        CharsPosition[k] = j + 1;
+                        charsPosition[k] = j + 1;
                         k++;
                     }
 
-                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+                    charsPosition[charsPosition.length - 1] = calculateString.length() + 1;
 
                 }
-                for (int k = 0; k < CharsPosition.length; k++) {
+                for (int k = 0; k < charsPosition.length; k++) {
 
-                    if (CharsPosition[k] == i + 1) {
-                        startPosition = CharsPosition[k - 1];
-                        finishPosition = CharsPosition[k + 1] - 1;
+                    if (charsPosition[k] == i + 1) {
+                        startPosition = charsPosition[k - 1];
+                        finishPosition = charsPosition[k + 1] - 1;
                     }
                 }
 
                 a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
                 b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
 
-                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
-                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
-                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
+                System.out.println(ClassOfConstant.PARSING_NUMBER + a);
+                System.out.println(ClassOfConstant.PARSING_SIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSING_NUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
                 if (b == 0) {
-                    System.out.println(ClassOfConstant.DIVIZIONBYZERO);
+                    System.out.println(ClassOfConstant.DIVIZION_BY_ZERO);
                     return;
                 }
 
                 c = a / b;
 
-                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                System.out.println(ClassOfConstant.RESUALT_SUBEXPRESSION + c);
                 calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
+                System.out.println(ClassOfConstant.STRING_WITH_RESUALT + calculateString);
                 break;
             }
         }
 
         for (int i = 0; i < calculateString.length(); i++) {
             if ((calculateString.charAt(i) == '*') || (calculateString.charAt(i) == '/')) {
-                multdiv();
+                multDiv();
             }
         }
     }
@@ -336,18 +340,18 @@ public class Binary extends Calculator {
      * Вычисление подвыражения, содержащего сложение и/или умножение, с учетом знаковой переменной
      * Если в строке есть еще операции сложения и/или умножения, то метод вызывается рекурсивно
      */
-    public void addsub() {
+    public void addSub() {
 
-        int[] CharsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
+        int[] charsPosition = new int[arraySizeCalculation(calculateString.toString()) + 2]; // массив для хранения позиции знаков в выражении/подвыражении
 
         int a, b; // переменные для операндов
         Integer c = null; // переменная для результата вычисления двух операндов
 
         for (int i = 0; i < calculateString.length(); i++) {
 
-            if ((calculateString.charAt(i) == '+') && (sign == true)) {
+            if ((calculateString.charAt(i) == '+') && sign) {
 
-                CharsPosition[0] = 0;
+                charsPosition[0] = 0;
 
                 for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
 
@@ -355,40 +359,40 @@ public class Binary extends Calculator {
                             (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
                             (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
 
-                        CharsPosition[k] = j + 1;
+                        charsPosition[k] = j + 1;
                         k++;
                     }
 
-                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+                    charsPosition[charsPosition.length - 1] = calculateString.length() + 1;
 
                 }
-                for (int k = 0; k < CharsPosition.length; k++) {
+                for (int k = 0; k < charsPosition.length; k++) {
 
-                    if (CharsPosition[k] == i + 1) {
-                        startPosition = CharsPosition[k - 1];
-                        finishPosition = CharsPosition[k + 1] - 1;
+                    if (charsPosition[k] == i + 1) {
+                        startPosition = charsPosition[k - 1];
+                        finishPosition = charsPosition[k + 1] - 1;
                     }
                 }
 
                 a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
                 b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
 
-                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
-                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
-                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
+                System.out.println(ClassOfConstant.PARSING_NUMBER + a);
+                System.out.println(ClassOfConstant.PARSING_SIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSING_NUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
                 c = a + b;
 
-                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                System.out.println(ClassOfConstant.RESUALT_SUBEXPRESSION + c);
                 calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
+                System.out.println(ClassOfConstant.STRING_WITH_RESUALT + calculateString);
                 break;
 
-            } else if ((calculateString.charAt(i) == '+') && (sign == false)) {
+            } else if ((calculateString.charAt(i) == '+') && !sign) {
 
-                CharsPosition[0] = 0;
+                charsPosition[0] = 0;
 
                 for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
 
@@ -396,27 +400,27 @@ public class Binary extends Calculator {
                             (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
                             (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
 
-                        CharsPosition[k] = j + 1;
+                        charsPosition[k] = j + 1;
                         k++;
                     }
 
-                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+                    charsPosition[charsPosition.length - 1] = calculateString.length() + 1;
 
                 }
-                for (int k = 0; k < CharsPosition.length; k++) {
+                for (int k = 0; k < charsPosition.length; k++) {
 
-                    if (CharsPosition[k] == i + 1) {
-                        startPosition = CharsPosition[k - 1];
-                        finishPosition = CharsPosition[k + 1] - 1;
+                    if (charsPosition[k] == i + 1) {
+                        startPosition = charsPosition[k - 1];
+                        finishPosition = charsPosition[k + 1] - 1;
                     }
                 }
 
                 a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
                 b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
 
-                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
-                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
-                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
+                System.out.println(ClassOfConstant.PARSING_NUMBER + a);
+                System.out.println(ClassOfConstant.PARSING_SIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSING_NUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
@@ -427,15 +431,15 @@ public class Binary extends Calculator {
                     sign = true;
                 }
 
-                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                System.out.println(ClassOfConstant.RESUALT_SUBEXPRESSION + c);
                 calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
+                System.out.println(ClassOfConstant.STRING_WITH_RESUALT + calculateString);
                 break;
             }
 
-            if ((calculateString.charAt(i) == '-') && (sign == true)) {
+            if ((calculateString.charAt(i) == '-') && sign) {
 
-                CharsPosition[0] = 0;
+                charsPosition[0] = 0;
 
                 for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
 
@@ -443,27 +447,27 @@ public class Binary extends Calculator {
                             (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
                             (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
 
-                        CharsPosition[k] = j + 1;
+                        charsPosition[k] = j + 1;
                         k++;
                     }
 
-                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+                    charsPosition[charsPosition.length - 1] = calculateString.length() + 1;
 
                 }
-                for (int k = 0; k < CharsPosition.length; k++) {
+                for (int k = 0; k < charsPosition.length; k++) {
 
-                    if (CharsPosition[k] == i + 1) {
-                        startPosition = CharsPosition[k - 1];
-                        finishPosition = CharsPosition[k + 1] - 1;
+                    if (charsPosition[k] == i + 1) {
+                        startPosition = charsPosition[k - 1];
+                        finishPosition = charsPosition[k + 1] - 1;
                     }
                 }
 
                 a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
                 b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
 
-                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
-                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
-                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
+                System.out.println(ClassOfConstant.PARSING_NUMBER + a);
+                System.out.println(ClassOfConstant.PARSING_SIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSING_NUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
@@ -474,14 +478,14 @@ public class Binary extends Calculator {
                     sign = false;
                 }
 
-                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                System.out.println(ClassOfConstant.RESUALT_SUBEXPRESSION + c);
                 calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
+                System.out.println(ClassOfConstant.STRING_WITH_RESUALT + calculateString);
                 break;
 
-            } else if ((calculateString.charAt(i) == '-') && (sign == false)) {
+            } else if ((calculateString.charAt(i) == '-') && !sign) {
 
-                CharsPosition[0] = 0;
+                charsPosition[0] = 0;
 
                 for (int j = 0, k = 1; j < calculateString.length() - 1; j++) {
 
@@ -489,42 +493,42 @@ public class Binary extends Calculator {
                             (calculateString.charAt(j) == '*') || (calculateString.charAt(j) == '/') ||
                             (calculateString.charAt(j) == '(') || (calculateString.charAt(j) == ')')) {
 
-                        CharsPosition[k] = j + 1;
+                        charsPosition[k] = j + 1;
                         k++;
                     }
 
-                    CharsPosition[CharsPosition.length - 1] = calculateString.length() + 1;
+                    charsPosition[charsPosition.length - 1] = calculateString.length() + 1;
 
                 }
-                for (int k = 0; k < CharsPosition.length; k++) {
+                for (int k = 0; k < charsPosition.length; k++) {
 
-                    if (CharsPosition[k] == i + 1) {
-                        startPosition = CharsPosition[k - 1];
-                        finishPosition = CharsPosition[k + 1] - 1;
+                    if (charsPosition[k] == i + 1) {
+                        startPosition = charsPosition[k - 1];
+                        finishPosition = charsPosition[k + 1] - 1;
                     }
                 }
 
                 a = Integer.parseInt(calculateString.substring(startPosition, i).toString(), 2);
                 b = Integer.parseInt(calculateString.substring(i + 1, finishPosition).toString(), 2);
 
-                System.out.println(ClassOfConstant.PARSINGNUMBER + a);
-                System.out.println(ClassOfConstant.PARSINGSIGN + calculateString.charAt(i));
-                System.out.println(ClassOfConstant.PARSINGNUMBER + b);
+                System.out.println(ClassOfConstant.PARSING_NUMBER + a);
+                System.out.println(ClassOfConstant.PARSING_SIGN + calculateString.charAt(i));
+                System.out.println(ClassOfConstant.PARSING_NUMBER + b);
 
                 calculateString.delete(startPosition, finishPosition);
 
                 c = a + b;
 
-                System.out.println(ClassOfConstant.RESUALTSUBEXPRESSION + c);
+                System.out.println(ClassOfConstant.RESUALT_SUBEXPRESSION + c);
                 calculateString.insert(startPosition, Integer.toBinaryString(c));
-                System.out.println(ClassOfConstant.STRINGWITHRESUALT + calculateString);
+                System.out.println(ClassOfConstant.STRING_WITH_RESUALT + calculateString);
                 break;
             }
         }
 
         for (int i = 0; i < calculateString.length(); i++) {
             if ((calculateString.charAt(i) == '+') || (calculateString.charAt(i) == '-')) {
-                addsub();
+                addSub();
             }
         }
     }
@@ -539,20 +543,24 @@ public class Binary extends Calculator {
         calculateString.delete(0, calculateString.length());
         calculateString.append(input);
 
-        // первый приоритет - скобки
-        brackets();
+        try {
+            // первый приоритет - скобки
+            brackets();
 
-        // второй приоритет минус перед выражением
-        minuser();
+            // второй приоритет минус перед выражением
+            minuser();
 
-        // третий приоритет возведение в степень
-        exponent();
+            // третий приоритет возведение в степень
+            exponent();
 
-        // четвернтый приоритет умножения/деление
-        multdiv();
+            // четвернтый приоритет умножения/деление
+            multDiv();
 
-        // пятый приоритет сложение/вычитание
-        addsub();
+            // пятый приоритет сложение/вычитание
+            addSub();
+        } catch (NumberFormatException exp) {
+            return new StringBuilder(ClassOfConstant.WRONG_EXPRESSION);
+        }
 
         return calculateString;
     }

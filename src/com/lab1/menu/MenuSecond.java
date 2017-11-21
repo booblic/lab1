@@ -18,17 +18,17 @@ public class MenuSecond extends MenuEntry {
     /**
      * Переменная для хранения строки считанной из файла
      */
-    private String str = null;
+    private String input = null;
 
     /**
      * Переменная для хранения выражения
      */
-    private String substr = null;
+    private String line = null;
 
     /**
      * Переменная для хранения системы счисленияа
      */
-    private int i = 0;
+    private int numberSystems = 0;
 
     /**
      * Конструктор вызывающий конструктор базового (абстрактного) класса
@@ -52,47 +52,53 @@ public class MenuSecond extends MenuEntry {
     public void run() {
 
         try(BufferedReader bufferedReader = new BufferedReader(new FileReader("file.txt"))) {
-            str = bufferedReader.readLine();
+            input = bufferedReader.readLine();
         } catch (IOException exc) {
             System.out.println(exc);
         }
 
-        Scanner scanner = new Scanner(str);
+        Scanner scanner = new Scanner(input);
 
         if (scanner.hasNext()) {
-            i = scanner.nextInt();
-            System.out.println(ClassOfConstant.READEDNUMBERSYSTEM + i);
-            substr = scanner.nextLine().trim();
-            System.out.println(ClassOfConstant.READEDEXPRESSION + substr);
+            numberSystems = scanner.nextInt();
+
+            if ((numberSystems != 2) && (numberSystems != 8) && (numberSystems != 10) && (numberSystems != 16)) {
+                System.out.println(ClassOfConstant.WRONG_SYSREM_NUMBER);
+                return;
+            }
+
+            System.out.println(ClassOfConstant.READED_SYSREM_NUMBER + numberSystems);
+            line = scanner.nextLine().trim();
+            System.out.println(ClassOfConstant.READED_EXPRESSION + line);
 
         } else {
-            System.out.println(ClassOfConstant.EMPTSTRING);
+            System.out.println(ClassOfConstant.EMPTY_STRING);
         }
 
         int openBracketNumber = 0, closeBracketNumber = 0;
 
-        for (int j = 0; j < substr.length(); j++) {
-            if (substr.charAt(j) == '(') { openBracketNumber++; }
-            if (substr.charAt(j) == ')') { closeBracketNumber++; }
+        for (int j = 0; j < line.length(); j++) {
+            if (line.charAt(j) == '(') { openBracketNumber++; }
+            if (line.charAt(j) == ')') { closeBracketNumber++; }
         }
 
         if(openBracketNumber != closeBracketNumber) {
-            System.out.println(ClassOfConstant.NOBRECKETS);
+            System.out.println(ClassOfConstant.NO_BRECKETS);
             return;
         }
 
-        switch (i) {
+        switch (numberSystems) {
             case 2:
-                action(new Binary(substr));
+                action(new Binary(line));
                 break;
             case 8:
-                action(new Octal(substr));
+                action(new Octal(line));
                 break;
             case 10:
-                action(new Decimal(substr));
+                action(new Decimal(line));
                 break;
             case 16:
-                action(new Hexadecimal(substr));
+                action(new Hexadecimal(line));
                 break;
         }
     }

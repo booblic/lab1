@@ -45,19 +45,28 @@ public class Menu {
      */
     public void run() {
 
-        while (!isExit) {
+        String line = null;
 
+        while (!isExit) {
             printMenu();
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
             try {
-                String line = reader.readLine();
+                line = reader.readLine();
+            } catch (IOException exp) {
+                System.out.println(exp);
+            } catch (NumberFormatException exp) {
+                System.out.println(ClassOfConstant.NOT_A_NUMBER);
+            }
+
+            try {
                 int choice = Integer.parseInt(line);
                 MenuEntry entry = entries.get(choice - 1);
                 entry.run();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IndexOutOfBoundsException exp) {
+                System.out.println(ClassOfConstant.MENU_ITEM_NOT_EXIST);
             }
+
         }
     }
 
